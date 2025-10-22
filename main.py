@@ -1,6 +1,9 @@
+from logging import exception
 import flights_data
 from datetime import datetime
 import sqlalchemy
+import csv
+import visualisation
 
 IATA_LENGTH = 3
 
@@ -76,10 +79,27 @@ def print_results(results):
     Each object *has* to contain the columns:
     FLIGHT_ID, ORIGIN_AIRPORT, DESTINATION_AIRPORT, AIRLINE, and DELAY.
     """
+
+    # checks if no results found
+    if not results:
+        print("Got 0 results.")
+        return
+
+    # extracting the columns (headers) attributes from the query to be used for creating the CSV file later
+    try:
+        headers = list(results[0]._mapping.keys())
+    except AttributeError:
+        print("Rows are not SQLAlchemy Row objects; cannot extract headers.")
+        return
+    # saving all data rows into thsi list. whem wrting the data to the CSV file, the information will be copied from here
+    rows_for_csv = []
+
+    # printing all rows that were retrieved from the query execution
     print(f"Got {len(results)} results.")
     for result in results:
         # turn result into dictionary
         result = result._mapping
+        m = result
 
         # Check that all required columns are in place
         try:
@@ -96,6 +116,31 @@ def print_results(results):
             print(f"{result['ID']}. {origin} -> {dest} by {airline}, Delay: {delay} Minutes")
         else:
             print(f"{result['ID']}. {origin} -> {dest} by {airline}")
+        rows_for_csv.append(dict(m))
+
+    #User is asked to save the results to a csv file
+    while True:
+        export_to_csv = input("\nWould you like to export this data to a CSV file? (y/n)")
+        if export_to_csv in ('y', 'n'):
+            break
+
+    if export_to_csv == 'n':
+        return
+
+    # The user is asked to name the csv file.
+    file_name = input("What would you like the CSV file to be called? ").replace(" ", "_") + ".csv"
+    path = "Exports/" + file_name
+
+    #Creqting the csv file under the path 'Exports/<file_name>'
+    try:
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=headers, restval="", extrasaction="ignore")
+            writer.writeheader()
+            for m in rows_for_csv:
+                writer.writerow(m)
+        print(f"The file {file_name} was successfully created under the path: {path}")
+    except Exception:
+        print("failed to save the file. please try again")
 
 
 def show_menu_and_get_input():
@@ -116,7 +161,7 @@ def show_menu_and_get_input():
                 return FUNCTIONS[choice][0]
         except ValueError as e:
             pass
-        print("Try again...")
+            print("Try again...")
 
 """
 Function Dispatch Dictionary
@@ -128,14 +173,17 @@ FUNCTIONS = { 1: (flight_by_id, "Show flight by ID"),
               5: (quit, "Exit")
              }
 
-
 def main():
 
     # The Main Menu loop
     while True:
         choice_func = show_menu_and_get_input()
         choice_func()
+        break
 
+    # Bonus task
+
+    visualisation.percentage_of_delayed_flight_per_airline()
 
 if __name__ == "__main__":
     main()

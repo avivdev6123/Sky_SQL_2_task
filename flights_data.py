@@ -47,7 +47,7 @@ def get_flights_by_date(day, month, year):
         'month': month,
         'year': year
     }
-    return execute_query(QUERY_FLIGHT_BY_DATE, params)
+    return execute_query(QUERY_FLIGHT_BY_DATE, params or {})
 
 def get_delayed_flights_by_airline(airline_name):
     """
@@ -57,7 +57,7 @@ def get_delayed_flights_by_airline(airline_name):
     params = {
         'airline': airline_name
     }
-    return execute_query(QUERY_DELAYED_FLIGHT_BY_AIRLINE, params)
+    return execute_query(QUERY_DELAYED_FLIGHT_BY_AIRLINE, params or {})
 
 def get_delayed_flights_by_airport(airport):
     """
@@ -67,4 +67,4 @@ def get_delayed_flights_by_airport(airport):
     params = {
         'airport' : airport
     }
-    return execute_query(QUERY_DELAYED_FLIGHT_BY_AIRPORT, params)
+    return execute_query(QUERY_DELAYED_FLIGHT_BY_AIRPORT, params or {})
