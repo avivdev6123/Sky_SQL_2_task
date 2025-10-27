@@ -6,7 +6,7 @@ import pandas as pd
 DATABASE_URL = "sqlite:///data/flights.sqlite3"
 
 def percentage_of_delayed_flight_per_airline():
-    QUERY = "SELECT flights.*, airlines.airline as AIRLINE_NAME, flights.ID as FLIGHT_ID, flights.DEPARTURE_DELAY as DELAY FROM flights JOIN airlines ON flights.airline = airlines.id"
+    QUERY = "SELECT flights.*, airlines.airline as AIRLINE_NAME, flights.ID as ID, flights.DEPARTURE_DELAY as DELAY FROM flights JOIN airlines ON flights.airline = airlines.id"
     engine = create_engine(DATABASE_URL)
     df = pd.read_sql(QUERY, engine)
     df["is_delayed"] = df["DEPARTURE_DELAY"] > 0

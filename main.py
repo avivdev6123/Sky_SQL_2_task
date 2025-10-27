@@ -170,7 +170,8 @@ FUNCTIONS = { 1: (flight_by_id, "Show flight by ID"),
               2: (flights_by_date, "Show flights by date"),
               3: (delayed_flights_by_airline, "Delayed flights by airline"),
               4: (delayed_flights_by_airport, "Delayed flights by origin airport"),
-              5: (quit, "Exit")
+              5: (visualisation.percentage_of_delayed_flight_per_airline, "Show graph - percentage of delayed flights per airline"),
+              6: (quit, "Exit")
              }
 
 def main():
@@ -179,11 +180,6 @@ def main():
     while True:
         choice_func = show_menu_and_get_input()
         choice_func()
-        break
-
-    # Bonus task
-
-    visualisation.percentage_of_delayed_flight_per_airline()
 
 if __name__ == "__main__":
     main()
